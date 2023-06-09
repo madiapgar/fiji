@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH -p short # Partition or queue. In this case, short!
+#SBATCH --job-name=lacto_picrust # Job name
+#SBATCH --mail-type=END,FAIL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=madison.apgar@cuanschutz.edu
+#SBATCH --nodes=1 # Only use a single node
+#SBATCH --ntasks=64 # Run on a single CPU
+#SBATCH --mem=256gb # Memory limit
+#SBATCH --time=12:00:00 # Time limit hrs:min:sec
+#SBATCH --output=/Users/maap1300/scripts/lacto_sum_scripts/picrust2_%j.out # Standard output and error log
+#SBATCH --error=/Users/maap1300/scripts/lacto_sum_scripts/picrust2_%j.err # %j inserts job number
+
+source .bashrc
+micromamba activate picrust2.5.1
+
+cd ~/scripts/lacto_sum_scripts
+
+picrust2_pipeline.py \
+    -s /Users/maap1300/myscratch/lacto_sum_scaled/picrust_part_two/dna-sequences.fasta \
+    -i /Users/maap1300/myscratch/lacto_sum_scaled/picrust_part_two/updated_lacto_sum_scaled.tsv \
+    -o /Users/maap1300/myscratch/lacto_sum_scaled/picrust_part_two/picrust2_out_pipeline \
+    --stratified \
+    --per_sequence_contrib \
+    -p 64

@@ -1,0 +1,14 @@
+## how to use scp commands to transfer files to and from fiji
+## you have to be on your local computer and NOT in fiji for this!!
+
+## from your computer to fiji
+scp ~/your/file/path/ fiji:file/path/where/goes/
+
+## from fiji to your computer 
+scp fiji:wanted/file/path/ ~/your/wanted/file/placement/ 
+
+## example of scp from remote to local 
+scp fiji:/Users/maap1300/scripts/no_lacto_tss/picrust2_out_pipeline_no_lacto/KO_metagenome_out/pred_metagenome_contrib.tsv.gz  ~/gut_microbiome_metabolomics/no_lacto_files/ 
+
+## if you want to copy an entire folder or "directory" you need to have scp -r (recursive)
+scp -r fiji:/Users/maap1300/scripts/no_lacto_tss/picrust2_out_pipeline_no_lacto/KO_metagenome_out  ~/gut_microbiome_metabolomics/no_lacto_files

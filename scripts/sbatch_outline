@@ -1,0 +1,46 @@
+#!/bin/bash
+#SBATCH -p short # Partition or queue. In this case, short!
+#SBATCH --job-name=slurm_test # Job name
+#SBATCH --mail-type=NONE # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=YOU@YOUREMAIL.COM
+#SBATCH --nodes=1 # Only use a single node
+#SBATCH --ntasks=1 # Run on a single CPU
+#SBATCH --mem=1gb # Memory limit
+#SBATCH --time=00:20:00 # Time limit hrs:min:sec
+#SBATCH --output=/Users/YOU/slurm_test_%j.out # Standard output and error log
+#SBATCH --error=/Users/YOU/slurm_test_%j.err # %j inserts job number
+
+source .bashrc
+
+mamba activate your_environment
+
+## wanted scripts to execute 
+scripts go here 
+with desired file paths IN fiji 
+
+
+## another example with everything filled out goes here 
+#!/bin/bash
+#SBATCH -p short # Partition or queue. In this case, short!
+#SBATCH --job-name=picrust2_2 # Job name
+#SBATCH --mail-type=END,FAIL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=madison.apgar@cuanschutz.edu
+#SBATCH --nodes=1 # Only use a single node
+#SBATCH --ntasks=32 # Run on a single CPU
+#SBATCH --mem=96gb # Memory limit
+#SBATCH --time=12:00:00 # Time limit hrs:min:sec
+#SBATCH --output=/Users/maap1300/scripts/no_lacto_tss/picrust2.2_%j.out # Standard output and error log
+#SBATCH --error=/Users/maap1300/scripts/no_lacto_tss/picrust2.2_%j.err # %j inserts job number
+
+source .bashrc
+micromamba activate picrust2
+
+cd ~/scripts/no_lacto_tss
+
+picrust2_pipeline.py \
+    -s /Users/maap1300/myscratch/total_sum_part_two/updated/dna-sequences.fasta \
+    -i /Users/maap1300/myscratch/total_sum_part_two/updated/total_sum_scaling2.tsv \
+    -o /Users/maap1300/myscratch/total_sum_part_two/picrust2_out_pipeline_tss2 \
+    --stratified \
+    --per_sequence_contrib \
+    -p 32

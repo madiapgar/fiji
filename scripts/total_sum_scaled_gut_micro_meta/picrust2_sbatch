@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH -p short # Partition or queue. In this case, short!
+#SBATCH --job-name=picrust2_3 # Job name
+#SBATCH --mail-type=END,FAIL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=madison.apgar@cuanschutz.edu
+#SBATCH --nodes=1 # Only use a single node
+#SBATCH --ntasks=64 # Run on a single CPU
+#SBATCH --mem=256gb # Memory limit
+#SBATCH --time=12:00:00 # Time limit hrs:min:sec
+#SBATCH --output=/Users/maap1300/scripts/tss_picrust/picrust2.3_%j.out # Standard output and error log
+#SBATCH --error=/Users/maap1300/scripts/tss_picrust/picrust2.3_%j.err # %j inserts job number
+
+source .bashrc
+micromamba activate picrust2.5.1
+
+cd ~/scripts/tss_picrust
+
+picrust2_pipeline.py \
+    -s /Users/maap1300/myscratch/total_sum_part_three/updated/dna-sequences.fasta \
+    -i /Users/maap1300/myscratch/total_sum_part_three/updated/total_sum_scaling3.tsv \
+    -o /Users/maap1300/myscratch/total_sum_part_three/picrust2_out_pipeline_tss3 \
+    --stratified \
+    --per_sequence_contrib \
+    -p 64

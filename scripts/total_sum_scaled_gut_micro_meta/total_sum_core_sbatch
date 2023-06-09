@@ -1,0 +1,64 @@
+#!/bin/bash
+#SBATCH -p short # Partition or queue. In this case, short!
+#SBATCH --job-name=total_sum_run3 # Job name
+#SBATCH --mail-type=END,FAIL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=madison.apgar@cuanschutz.edu
+#SBATCH --nodes=1 # Only use a single node
+#SBATCH --ntasks=64 # Run on a single CPU
+#SBATCH --mem=256gb # Memory limit
+#SBATCH --time=12:00:00 # Time limit hrs:min:sec
+#SBATCH --output=/Users/maap1300/scripts/total_sum_core/tss_run3_%j.out # Standard output and error log
+#SBATCH --error=/Users/maap1300/scripts/total_sum_core/tss_run3_%j.err # %j inserts job number
+
+source .bashrc
+micromamba activate qiime2-2023.2
+
+cd ~/scripts/total_sum_core
+
+qiime fragment-insertion sepp \
+    --i-representative-sequences /Users/maap1300/myscratch/total_sum_part_three/updated/euk_filt-mergedDietAim1rep-seqs_051523-Copy1.qza \
+    --o-tree /Users/maap1300/myscratch/total_sum_part_three/tree.qza \
+    --o-placements /Users/maap1300/myscratch/total_sum_part_three/placements.qza \
+    --i-reference-database /Users/maap1300/myscratch/total_sum_scaled_core_div/inputs/sepp-refs-silva-128.qza
+
+qiime fragment-insertion filter-features \
+    --i-table /Users/maap1300/myscratch/total_sum_part_three/updated/total_sum_scaling3.qza \
+    --i-tree /Users/maap1300/myscratch/total_sum_part_three/tree.qza \
+    --o-filtered-table /Users/maap1300/myscratch/total_sum_part_three/total-sum-filtered-table.qza \
+    --o-removed-table /Users/maap1300/myscratch/total_sum_part_three/total-sum-removed-table.qza
+
+qiime feature-classifier classify-sklearn \
+    --i-classifier /Users/maap1300/myscratch/total_sum_scaled_core_div/inputs/silva-138-99-515-806-nb-classifier.qza \
+    --i-reads /Users/maap1300/myscratch/total_sum_part_three/updated/euk_filt-mergedDietAim1rep-seqs_051523-Copy1.qza \
+    --o-classification /Users/maap1300/myscratch/total_sum_part_three/taxonomy.qza
+
+qiime metadata tabulate \
+    --m-input-file /Users/maap1300/myscratch/total_sum_part_three/taxonomy.qza \
+    --o-visualization /Users/maap1300/myscratch/total_sum_part_three/taxonomy_vis.qzv
+
+qiime taxa filter-table \
+    --i-table /Users/maap1300/myscratch/total_sum_part_three/updated/total_sum_scaling3.qza \
+    --i-taxonomy /Users/maap1300/myscratch/total_sum_part_three/taxonomy.qza \
+    --p-include p_ \
+    --p-exclude mitochondria,chloroplast \
+    --o-filtered-table /Users/maap1300/myscratch/total_sum_part_three/taxonomy_filtered.qza
+
+qiime feature-table summarize \
+    --i-table /Users/maap1300/myscratch/total_sum_part_three/taxonomy_filtered.qza \
+    --o-visualization /Users/maap1300/myscratch/total_sum_part_three/taxonomy_filtered.qzv
+
+qiime feature-table filter-samples \
+    --i-table /Users/maap1300/myscratch/total_sum_part_three/taxonomy_filtered.qza \
+    --m-metadata-file /Users/maap1300/myscratch/total_sum_part_three/updated/total_sum_metadata.tsv \
+    --o-filtered-table /Users/maap1300/myscratch/total_sum_part_three/tax_filt_actual.qza
+
+
+## need to figure out the new sampling depth 
+qiime diversity core-metrics-phylogenetic \
+    --i-phylogeny /Users/maap1300/myscratch/total_sum_part_three/tree.qza \
+    --i-table /Users/maap1300/myscratch/total_sum_part_three/tax_filt_actual.qza \
+    --p-sampling-depth  ???? \
+    --m-metadata-file /Users/maap1300/myscratch/total_sum_part_three/updated/total_sum_metadata.tsv \
+    --output-dir /Users/maap1300/myscratch/total_sum_part_three/tss_core_metrics3
+
+

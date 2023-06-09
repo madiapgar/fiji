@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH -p short # Partition or queue. In this case, short!
+#SBATCH --job-name=picrust_test # Job name
+#SBATCH --mail-type=END,FAIL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=madison.apgar@cuanschutz.edu
+#SBATCH --nodes=1 # Only use a single node
+#SBATCH --ntasks=32 # Run on a single CPU
+#SBATCH --mem=96gb # Memory limit
+#SBATCH --time=12:00:00 # Time limit hrs:min:sec
+#SBATCH --output=/Users/maap1300/scripts/test_scripts/picrust2_%j.out # Standard output and error log
+#SBATCH --error=/Users/maap1300/scripts/test_scripts/picrust2_%j.err # %j inserts job number
+
+source .bashrc
+micromamba activate picrust2.5.1
+
+cd ~/scripts/test_scripts
+
+picrust2_pipeline.py \
+    -s /Users/maap1300/myscratch/test/picrust/dna-sequences.fasta \
+    -i /Users/maap1300/myscratch/test/picrust/feature-table.biom \
+    -o /Users/maap1300/myscratch/test/picrust/picrust2_out_pipeline \
+    --stratified \
+    --per_sequence_contrib \
+    -p 32
