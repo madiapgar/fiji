@@ -57,7 +57,7 @@ qiime feature-table filter-samples \
 qiime diversity core-metrics-phylogenetic \
     --i-phylogeny /Users/maap1300/myscratch/total_sum_part_three/tree.qza \
     --i-table /Users/maap1300/myscratch/total_sum_part_three/tax_filt_actual.qza \
-    --p-sampling-depth  ???? \
+    --p-sampling-depth  ? \
     --m-metadata-file /Users/maap1300/myscratch/total_sum_part_three/updated/total_sum_metadata.tsv \
     --output-dir /Users/maap1300/myscratch/total_sum_part_three/tss_core_metrics3
 
